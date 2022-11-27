@@ -1,0 +1,66 @@
+spring:
+  shardingsphere:
+    props:
+      sql:
+        show: true # 是否打印sql
+
+    datasource:
+      names: ds0,ds1,readds0,readds1
+      ds0:
+        username: root
+        password: 123456
+        url: jdbc:mysql://localhost:3306/ds0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+      ds1:
+        username: root
+        password: 123456
+        url: jdbc:mysql://localhost:3306/ds1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+      readds0:
+        username: root
+        password: 123456
+        url: jdbc:mysql://localhost:3307/ds0?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+      readds1:
+        username: root
+        password: 123456
+        url: jdbc:mysql://localhost:3307/ds1?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        type: com.alibaba.druid.pool.DruidDataSource
+
+    sharding:
+      #分库分表
+      tables:
+        t_order:
+          #数据节点
+          actual-data-nodes: ds$->{0..1}.t_order_$->{0..1}
+          key-generator:
+            type: SNOWFLAKE
+            column: order_id
+          #分库策略
+          database-strategy:
+            #行表达式
+            inline:
+              #列名称，多个列以逗号分隔
+              sharding-column: user_id
+              algorithm-expression: ds$->{user_id % 2}
+          #分表策略
+          table-strategy:
+            #行表达式
+            inline:
+              #分片列
+              sharding-column: order_id
+              algorithm-expression: t_order_$->{order_id % 2}
+      #读写分离
+      master-slave-rules:
+        ds0:
+          master-data-source-name: ds0
+          slave-data-source-names: readds0
+          load-balance-algorithm-type: round_robin
+        ds1:
+          master-data-source-name: ds1
+          slave-data-source-names: readds1
+          load-balance-algorithm-type: round_robin

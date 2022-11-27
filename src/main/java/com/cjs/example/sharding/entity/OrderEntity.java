@@ -22,4 +22,6 @@ public class OrderEntity implements Serializable {
     private Integer userId;
 
     private Integer status = 1;
+
+    private String phone;
 }

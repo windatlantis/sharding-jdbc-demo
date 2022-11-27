@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    #[单库单表]
+    #active: single
+    #[读写分离]
+    #active: masterslave
+    #[分库分表]
+    #active: strategy
+    #[读写分离+分库分表]
+    active: sphere
+  main:
+    allow-bean-definition-overriding: true
