@@ -1,12 +1,18 @@
 spring:
   profiles:
-    #[单库单表]
-    #active: single
-    #[读写分离]
-    #active: masterslave
-    #[分库分表]
-    #active: strategy
-    #[读写分离+分库分表]
-    active: sphere
+    #[读写分离+分库分表][数据加密]
+    active: sphere,encrypt
+
   main:
-    allow-bean-definition-overriding: true
+    allow-bean-definition-overriding: true  #当遇到同样名字的时候，是否允许覆盖注册
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    database: mysql
+    show-sql: true
+    properties:
+      enable: true
+      bootstrap-mode: default
+      hibernate:
+        format_sql: true
+        enable_lazy_load_no_trans: true

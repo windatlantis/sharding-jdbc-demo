@@ -38,15 +38,16 @@ spring:
             static-strategy:
               write-data-source-name: ds0
               read-data-source-names: readds0
-            load-balancer-name: random
+            load-balancer-name: round
           ds1:
             static-strategy:
               write-data-source-name: ds1
               read-data-source-names: readds1
-            load-balancer-name: random
+            load-balancer-name: round
         load-balancers:
-          random:
-            type: ROUND_ROBIN
+          round:
+            # ROUND_ROBIN 会受到hibernate的autocommit=false影响,而FIXED_REPLICA_ROUND_ROBIN则不会
+            type: FIXED_REPLICA_ROUND_ROBIN
 
       sharding:
         #分库分表
@@ -59,14 +60,12 @@ spring:
               column: order_id
             #分库策略
             database-strategy:
-              #行表达式
               standard:
                 #列名称，多个列以逗号分隔
                 sharding-column: user_id
                 sharding-algorithm-name: database_inline
             #分表策略
             table-strategy:
-              #行表达式
               standard:
                 #分片列
                 sharding-column: order_id
@@ -76,23 +75,12 @@ spring:
             type: SNOWFLAKE
         sharding-algorithms:
           database_inline:
+            #行表达式
             type: INLINE
             props:
               algorithm-expression: ds$->{user_id % 2}
           t_order_inline:
+            #行表达式
             type: INLINE
             props:
               algorithm-expression: t_order_$->{order_id % 2}
-
-        #读写分离
-#        master-slave-rules:
-#          ds0:
-#            master-data-source-name: ds0
-#            slave-data-source-names: readds0
-#            load-balance-algorithm-type: round_robin
-#          ds1:
-#            master-data-source-name: ds1
-#            slave-data-source-names: readds1
-#            load-balance-algorithm-type: round_robin
-
-
