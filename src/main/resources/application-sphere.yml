@@ -46,8 +46,9 @@ spring:
             load-balancer-name: round
         load-balancers:
           round:
-            # ROUND_ROBIN 会受到hibernate的autocommit=false影响,而FIXED_REPLICA_ROUND_ROBIN则不会
-            type: FIXED_REPLICA_ROUND_ROBIN
+            # ROUND_ROBIN 会受到hibernate的autocommit=false影响,而TRANSACTION_ROUND_ROBIN则不会
+            # https://shardingsphere.apache.org/document/current/cn/user-manual/common-config/builtin-algorithm/load-balance/
+            type: TRANSACTION_ROUND_ROBIN
 
       sharding:
         #分库分表

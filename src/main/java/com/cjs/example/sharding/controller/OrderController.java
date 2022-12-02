@@ -35,11 +35,13 @@ public class OrderController {
     @ResponseBody
     public List<OrderEntity> findAll(@RequestParam(value = "userId", required = false) Integer userId,
                                      @RequestParam(value = "orderId", required = false) Long orserId,
-                                     @RequestParam(value = "status", required = false) Integer status) {
+                                     @RequestParam(value = "status", required = false) Integer status,
+                                     @RequestParam(value = "phone", required = false) String phone) {
         OrderEntity entity = new OrderEntity();
         entity.setUserId(userId);
         entity.setOrderId(orserId);
         entity.setStatus(status);
+        entity.setPhone(phone);
         return orderService.findAll(entity);
     }
 }
